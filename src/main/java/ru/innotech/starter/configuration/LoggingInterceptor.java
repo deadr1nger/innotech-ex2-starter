@@ -17,7 +17,10 @@ import java.time.temporal.ChronoUnit;
 public class LoggingInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(LoggingInterceptor.class);
     private LocalDateTime startTime;
-
+    @PostConstruct
+    public void postInit(){
+        System.out.println("Creating bean test");
+    }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         startTime = LocalDateTime.now();
@@ -30,21 +33,21 @@ public class LoggingInterceptor implements HandlerInterceptor {
         logResponse(response, startTime);
     }
 
-    private void logRequest(HttpServletRequest request) {
+    protected void logRequest(HttpServletRequest request) {
         logger.info("Incoming request: method={}, uri={}, headers={}",
                 request.getMethod(),
                 request.getRequestURI(),
                 getHeaders(request));
     }
 
-    private void logResponse(HttpServletResponse response, LocalDateTime startTime) {
+    protected void logResponse(HttpServletResponse response, LocalDateTime startTime) {
         long processingTime = ChronoUnit.MILLIS.between(startTime, LocalDateTime.now());
         logger.info("Outgoing response: status={}, processingTime={}ms",
                 response.getStatus(),
                 processingTime);
     }
 
-    private String getHeaders(HttpServletRequest request) {
+    protected String getHeaders(HttpServletRequest request) {
         StringBuilder headers = new StringBuilder();
         request.getHeaderNames().asIterator().forEachRemaining(header ->
                 headers.append(header).append("=").append(request.getHeader(header)).append("; ")
