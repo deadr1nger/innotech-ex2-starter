@@ -1,6 +1,6 @@
 package ru.innotech.starter.configuration;
 
-import jakarta.annotation.PostConstruct;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -15,17 +15,15 @@ import java.time.temporal.ChronoUnit;
 
 @Component
 public class LoggingInterceptor implements HandlerInterceptor {
+
     private static final Logger logger = LoggerFactory.getLogger(LoggingInterceptor.class);
     private LocalDateTime startTime;
-    @PostConstruct
-    public void postInit(){
-        System.out.println("Creating bean test");
-    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         startTime = LocalDateTime.now();
         logRequest(request);
-        return true; // продолжить выполнение
+        return true;
     }
 
     @Override
@@ -34,24 +32,17 @@ public class LoggingInterceptor implements HandlerInterceptor {
     }
 
     protected void logRequest(HttpServletRequest request) {
-        logger.info("Incoming request: method={}, uri={}, headers={}",
-                request.getMethod(),
-                request.getRequestURI(),
-                getHeaders(request));
+        logger.info("Incoming request: method={}, uri={}, headers={}", request.getMethod(), request.getRequestURI(), getHeaders(request));
     }
 
     protected void logResponse(HttpServletResponse response, LocalDateTime startTime) {
         long processingTime = ChronoUnit.MILLIS.between(startTime, LocalDateTime.now());
-        logger.info("Outgoing response: status={}, processingTime={}ms",
-                response.getStatus(),
-                processingTime);
+        logger.info("Outgoing response: status={}, processingTime={}ms", response.getStatus(), processingTime);
     }
 
     protected String getHeaders(HttpServletRequest request) {
         StringBuilder headers = new StringBuilder();
-        request.getHeaderNames().asIterator().forEachRemaining(header ->
-                headers.append(header).append("=").append(request.getHeader(header)).append("; ")
-        );
+        request.getHeaderNames().asIterator().forEachRemaining(header -> headers.append(header).append("=").append(request.getHeader(header)).append("; "));
         return headers.toString();
     }
 }

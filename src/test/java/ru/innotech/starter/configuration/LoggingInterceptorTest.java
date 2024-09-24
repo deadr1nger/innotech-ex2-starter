@@ -14,7 +14,7 @@ import java.util.Enumeration;
 
 import static org.mockito.Mockito.*;
 
-public class LoggingInterceptorTest {
+class LoggingInterceptorTest {
 
     @Mock
     private HttpServletRequest request;
@@ -56,19 +56,14 @@ public class LoggingInterceptorTest {
     void testPreHandle() {
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestURI()).thenReturn("/test-uri");
-
         loggingInterceptor.preHandle(request, response, null);
-
-
     }
 
     @Test
     void testAfterCompletion() {
         LocalDateTime startTime = LocalDateTime.now().minusSeconds(1);
         ReflectionTestUtils.setField(loggingInterceptor, "startTime", startTime);
-
         when(response.getStatus()).thenReturn(200);
-
         loggingInterceptor.afterCompletion(request, response, null, null);
 
 
